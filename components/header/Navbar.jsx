@@ -17,8 +17,7 @@ const Navbar = () => {
   async function getUser() {
     const supabase = createClient();
     const { data, error } = await supabase.auth.getUser();
-    console.log("userData", data);
-    
+   
     if (error) {
       console.log(error);
       return null;

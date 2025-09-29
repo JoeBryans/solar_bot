@@ -25,7 +25,7 @@ const SideBar = () => {
     }, [])
     return (
         <div className='fixed  w-56  h-screen bg-gray-50 flex flex-col overflow-auto scrollbar-hide'>
-            <div className='flex flex-col gap-4 '>
+            <div className='flex flex-col gap-4 mt-20 '>
                 {/* <div className='text-xl font-bold text-center'>Projects</div> */}
                 {
                     projectTitles.map((item, index) => {
@@ -33,8 +33,11 @@ const SideBar = () => {
                             <div key={index} className='flex gap-2 items-center cursor-pointer px-5'>
                                 {/* <div className='w-4 h-4 bg-gray-500 rounded-full'></div> */}
                                 <Link href={`/dashboard/${item?.id}`}
-                                    className='line-clamp-1 text-md'
-                                >{item?.title}</Link>
+                                    className='text-md flex gap-1 '
+                                >
+                                    <span>{index + 1}.</span>
+                                    <span className='line-clamp-1 '>{item?.title}</span>
+                                </Link>
                             </div>
                         )
                     })

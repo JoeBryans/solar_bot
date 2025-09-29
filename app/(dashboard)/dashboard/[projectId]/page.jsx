@@ -6,7 +6,6 @@ import Link from 'next/link'
 import UserMessage from '../../_components/UserMessage'
 import AiMessage from '../../_components/AiMessage'
 import { cn } from '@/lib/utils'
-import { getProject } from '@/lib/bot'
 import { toast } from 'sonner'
 import { Loader2, Send } from 'lucide-react'
 import Footer from '@/components/footer/Footer'
@@ -38,31 +37,43 @@ const page = () => {
   async function generateProject() {
     const supabase = createClient()
     try {
-      const Project = await getProject({ input: messages[0]?.prompt })
-      await supabase.from("projects").update({
-        title: Project.title
-      }).eq("id", projectId)
-      const { data: message, error } = await supabase.from("messages").insert({
-        title: Project.title,
-        loadAnalysis: Project.loadAnalysis,
-        batteryBankSizing: Project.batteryBankSizing,
-        solarPVArraySizing: Project.solarPVArraySizing,
-        chargeControllerSizing: Project.chargeControllerSizing,
-        inverterSizing: Project.inverterSizing,
-        summary: Project.summary,
-        suggestions: Project.suggestions,
-        notes: Project.notes,
-        project_id: projectId,
-        role: "AI"
+      const Project = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: messages[0]?.prompt,
+        }),
+      })
+      const data = await Project.json()
+      console.log("data", data)
+      if (Project.ok) {
+        await supabase.from("projects").update({
+          title: Project.title
+        }).eq("id", projectId)
+        const { data: message, error } = await supabase.from("messages").insert({
+          title: data.title,
+          loadAnalysis: data.loadAnalysis,
+          batteryBankSizing: data.batteryBankSizing,
+          solarPVArraySizing: data.solarPVArraySizing,
+          chargeControllerSizing: data.chargeControllerSizing,
+          inverterSizing: data.inverterSizing,
+          summary: data.summary,
+          suggestions: data.suggestions,
+          notes: data.notes,
+          project_id: projectId,
+          role: "AI"
 
-      }).select("*")
-      if (error) {
-        setIsLoading(false)
-        toast.error(`Error: ${error.message}`)
-      } else {
-        setIsLoading(false)
-        toast.success(`Success `)
-        //  router.push(`/dashboard/${message[0].id}`)
+        }).select("*")
+        if (error) {
+          setIsLoading(false)
+          toast.error(`Error: ${error.message}`)
+        } else {
+          setIsLoading(false)
+          toast.success(`Success `)
+          //  router.push(`/dashboard/${message[0].id}`)
+        }
       }
     } catch (error) {
       console.log("error", error)
@@ -130,18 +141,28 @@ const page = () => {
         setIsLoading(false)
         toast.error(`Error: ${error.message}`)
       } else {
-        const respond = await getProject({ input: value })
-        console.log("respond", respond)
+        
+        const respond = await fetch("/api/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input: value,
+          }),
+        })
+        const data = await respond.json()
+        if (respond.ok) {
         const { data: message, error } = await supabase.from("messages").insert({
-          title: respond.title,
-          loadAnalysis: respond.loadAnalysis,
-          batteryBankSizing: respond.batteryBankSizing,
-          solarPVArraySizing: respond.solarPVArraySizing,
-          chargeControllerSizing: respond.chargeControllerSizing,
-          inverterSizing: respond.inverterSizing,
-          summary: respond.summary,
-          suggestions: respond.suggestions,
-          notes: respond.notes,
+          title: data.title,
+          loadAnalysis: data.loadAnalysis,
+          batteryBankSizing: data.batteryBankSizing,
+          solarPVArraySizing: data.solarPVArraySizing,
+          chargeControllerSizing: data.chargeControllerSizing,
+          inverterSizing: data.inverterSizing,
+          summary: data.summary,
+          suggestions: data.suggestions,
+          notes: data.notes,
           project_id: projectId,
           role: "AI"
         }).select().single()
@@ -152,6 +173,7 @@ const page = () => {
           setIsLoading(false)
 
           //  router.push(`/dashboard/${message[0].id}`)
+        }
         }
 
       }

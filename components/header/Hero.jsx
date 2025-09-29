@@ -1,13 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-// import { motion } from "framer-motion";
 import Link from "next/link";
 import { Loader2, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { getTitle } from "@/lib/title";
 
 
 const Samples = [
@@ -21,7 +19,13 @@ const Hero = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [value, setValue] = useState("")
   const router = useRouter()
-
+ 
+  // const splitValue= value.split(" ")
+  // const title = splitValue.join 
+  // console.log("splitValue", splitValue)
+  // console.log("title", title)
+  
+  
 
 
   async function handleSubmit(e) {
