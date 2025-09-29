@@ -49,7 +49,7 @@ const page = () => {
     const supabase = createClient()
     if (credite === 0) {
       toast.error(`You don't have enough credits`)
-      router.push("/payment")
+      router.push("/plans")
       return
     }
     try {
@@ -172,7 +172,7 @@ const page = () => {
     e.preventDefault()
     if (credite === 3) {
       toast.error(`You don't have enough credits`)
-      router.push("/payment")
+      router.push("/plans")
 
     }
     try {
