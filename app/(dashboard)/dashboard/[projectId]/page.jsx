@@ -240,7 +240,7 @@ const page = () => {
   return (
     <>
 
-      <div className='w-full min-h-screen  flex flex-col items-start justify-center overflow-auto scrollbar-hide relative '>
+      <div className='w-full min-h-screen  flex flex-col items-start justify-center overflow-auto scrollbar-hide relative px-5'>
 
 
 

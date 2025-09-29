@@ -3,7 +3,7 @@ import Hero from "@/components/header/Hero";
 
 export default function Home() {
   return (
-    <div className="w-full min-h-[100vh] ">
+    <div className="w-full min-h-[100vh] px-5 ">
       <Hero />
       <Footer />
     </div>

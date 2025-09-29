@@ -67,30 +67,31 @@ const page = () => {
 
 
     return (
-        <div className='w-full h-screen flex flex-col items-center justify-center'>
+        <div className='w-full h-screen flex flex-col items-center justify-center text-gray-800 px-5'>
             <div
-                className={cn('flex flex-col items-center justify-center max-w-md mx-auto w-full bg-gray-900 rounded-lg p-4 shadow-md gap-4',
-                    isLoading && 'animate-pulse bg-gray-600'
+                className={cn('flex flex-col items-center justify-center max-w-md mx-auto w-full bg-gray-200 rounded-lg p-4 shadow-md gap-4',
+                    isLoading && 'animate-pulse bg-gray-300'
 
                 )}
             >
-                <h1 className="text-center text-2xl font-bold text-white">Verify Email</h1>
+                <h1 className="text-center text-2xl font-bold ">Verify Email</h1>
                 {
                     error && <p className="text-center text-sm text-red-500 w-full bg-red-200 rounded-lg p-1.5">{error}</p>
                 }
                 <InputOTP
                     maxLength={6}
                     value={value}
-
                     onChange={(value) => setValue(value)}
                 >
-                    <InputOTPGroup >
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
+                    <InputOTPGroup
+                    >
+                        <InputOTPSlot index={0} className={"border-2 border-gray-500 text-lg"}
+                        />
+                        <InputOTPSlot index={1} className={"border-2 border-gray-500 text-lg"} />
+                        <InputOTPSlot index={2} className={"border-2 border-gray-500 text-lg"} />
+                        <InputOTPSlot index={3} className={"border-2 border-gray-500 text-lg"} />
+                        <InputOTPSlot index={4} className={"border-2 border-gray-500 text-lg"} />
+                        <InputOTPSlot index={5} className={"border-2 border-gray-500 text-lg"} />
                     </InputOTPGroup>
                 </InputOTP>
 

@@ -97,9 +97,9 @@ const SignUp = () => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className='flex flex-col items-center justify-center max-w-md mx-auto w-full bg-gray-900 rounded-lg p-4 shadow-md gap-4'
+                    className='flex flex-col items-center justify-center max-w-md mx-auto w-full bg-gray-200 rounded-lg p-4 shadow-md gap-4 text-gray-700'
                 >
-                    <h1 className="text-center text-2xl font-bold text-white">Sign Up</h1>
+                    <h1 className="text-center text-2xl font-bold">Sign Up</h1>
                     {
                         error && <p className="text-center text-sm text-red-500 w-full bg-red-200 rounded-lg p-1.5">{error}</p>
                     }
@@ -115,7 +115,9 @@ const SignUp = () => {
                             >
                                 <FormLabel > Name </FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="text" placeholder="Enter your name" />
+                                    <Input {...field} type="text" placeholder="Enter your name"
+                                        className="w-full border-2 border-gray-500 text-lg"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -132,7 +134,7 @@ const SignUp = () => {
                             >
                                 <FormLabel > Email </FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="email" placeholder="jhon@gmail.com" />
+                                    <Input {...field} type="email" placeholder="jhon@gmail.com" className="w-full border-2 border-gray-500 text-lg" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -149,7 +151,7 @@ const SignUp = () => {
                             >
                                 <FormLabel > Phone </FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="text" placeholder="+91 99999999999" />
+                                    <Input {...field} type="text" placeholder="+91 99999999999" className="w-full border-2 border-gray-500 text-lg" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -167,24 +169,24 @@ const SignUp = () => {
                             >
                                 <FormLabel > Password </FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="password" placeholder="**********" />
+                                    <Input {...field} type="password" placeholder="**********" className="w-full border-2 border-gray-500 text-lg" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
 
                         )}
                     />
-                    <Button variant={"outline"} type="submit" className="w-full mt-4 text-gray-700 cursor-pointer font-semibold" disabled={isLoading}>
+                    <Button variant={"default"} type="submit" className="w-full mt-4  cursor-pointer font-semibold" disabled={isLoading}>
                         Sign Up
                         {isLoading && <span className="ml-2 animate-bounce text-gray-500 ">...</span>}
                     </Button>
 
                     <div>
-                        <p className="text-center text-sm text-gray-50">
-                            Already have an account? <Link href="/auth/sign-in">Sign In</Link>
+                        <p className="text-center text-md">
+                            Already have an account? <Link href="/auth/sign-in" className='hover:decoration-2 hover:underline'>Sign In</Link>
                         </p>
-                        <p className="text-center text-sm text-gray-50">
-                            By signing up, you agree to our <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy Policy</Link>
+                        <p className="text-center text-md">
+                            By signing up, you agree to our <Link href="/terms" className='hover:decoration-2 hover:underline'>Terms of Service</Link> and <Link href="/privacy" className='hover:decoration-2 hover:underline'>Privacy Policy</Link>
                         </p>
                     </div>
 

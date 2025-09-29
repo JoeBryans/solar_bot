@@ -58,9 +58,9 @@ const SignIn = () => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className='flex flex-col items-center justify-center max-w-md mx-auto w-full bg-gray-900 rounded-lg p-4 shadow-md gap-4'
+                    className='flex flex-col items-center justify-center max-w-md mx-auto w-full bg-gray-200 rounded-lg p-4 shadow-md gap-4 text-gray-700'
                 >
-                    <h1 className="text-center text-2xl font-bold text-white">Sign Up</h1>
+                    <h1 className="text-center text-2xl font-bold ">Sign In</h1>
                     {
                         error && <p className="text-center text-sm text-red-500 w-full bg-red-200 rounded-lg p-1.5">{error}</p>
                     }
@@ -70,11 +70,13 @@ const SignIn = () => {
                         render={({ field }) => (
 
                             <FormItem
-                                className={"w-full"}
+                                className={"w-full "}
                             >
-                                <FormLabel > Email </FormLabel>
+                                <FormLabel className={"text-lg "}> Email </FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="email" placeholder="jhon@gmail.com" />
+                                    <Input {...field} type="email" placeholder="jhon@gmail.com"
+                                        className="w-full border-2 border-gray-500 mt-2 text-lg"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -83,20 +85,20 @@ const SignIn = () => {
                     />
 
 
-                    <Button variant={"outline"} type="submit" className="w-full mt-4 text-gray-700 cursor-pointer font-semibold" disabled={isLoading}>
-                        Sign Up
+                    <Button variant={"default"} type="submit" className="w-full mt-4  cursor-pointer font-semibold" disabled={isLoading}>
+                        Sign In
                         {isLoading && <span className="ml-2 text-gray-500 animate-bounce">...</span>}
                     </Button>
 
                     <div>
-                        <p className="text-center text-sm text-gray-50">
+                        <p className="text-center  ">
                             Don't have an account?
-                            <Link href="/auth/sign-up"> Sign Up</Link>
+                            <Link href="/auth/sign-up" className='hover:decoration-2 hover:underline'> Sign Up</Link>
                         </p>
 
-                        <p className="text-center text-sm text-gray-50 mt-4">
+                        <p className="text-center   mt-4">
                             forgot password?
-                            <Link href="/auth/forgot-password"> Forgot Password</Link>
+                            <Link href="/auth/forgot-password" className='hover:decoration-2 hover:underline'> Forgot Password</Link>
                         </p>
 
                         {/* <p className="text-center text-sm text-gray-50">
