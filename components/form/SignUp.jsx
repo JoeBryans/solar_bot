@@ -46,7 +46,7 @@ const SignUp = () => {
                 password: data.password,
                 phone: data.phone,
                 options: {
-                    // emailRedirectTo: `${window.location.origin}/auth/verify-email`,
+                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/verify-email`,
                     data: {
                         name: data.name,
                         email: data.email,
