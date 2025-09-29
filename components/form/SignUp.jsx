@@ -64,12 +64,11 @@ const SignUp = () => {
                 setError(error.message)
             } else {
                 setIsLoading(false)
-                const { error } = await supabase.from('user').insert({
+                const { error } = await supabase.from('profile').insert({
                     id: userData.user.id,
                     name: data.name,
                     email: data.email,
                     phone: data.phone,
-                    password: data.password,
                 })
                 if (error) {
                     setIsLoading(false)

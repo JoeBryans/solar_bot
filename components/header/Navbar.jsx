@@ -10,26 +10,42 @@ import Image from "next/image";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
-   const pathname = usePathname();
-   const router = useRouter()
-   const isDashboard = pathname.includes("dashboard");
+  const [loggedUser, setLoggedUser] = useState(null);
+  const pathname = usePathname();
+  const router = useRouter()
+  const isDashboard = pathname.includes("dashboard");
+  const supabase = createClient();
+
+  // console.log("user", user)
 
   async function getUser() {
-    const supabase = createClient();
     const { data, error } = await supabase.auth.getUser();
-   
+
     if (error) {
       console.log(error);
       return null;
     }
     const user = data.user
-    setUser(user);
-    return user;
+    setLoggedUser(user);
+
+
   }
 
   useEffect(() => {
     getUser();
-  }, [user]);
+    if (loggedUser !== null) {
+      async function getProfile() {
+        const profile = await supabase.from("profile").select(
+          "*",
+        ).eq("id", loggedUser.id)
+        const user = profile.data[0]
+        setUser(user);
+        //  setProfile(profile.data[0])
+      }
+      getProfile()
+    }
+
+  }, [loggedUser]);
   // const user = false;
   return (
     <div className="w-full bg-gray-900 shadow-md border-b-2  text-gray-100 py-2 px-4">
@@ -40,10 +56,10 @@ const Navbar = () => {
           <div className="flex-none">
             <ul className="menu menu-horizontal px-1">
               <li className="text-lg font-demi-bold">
-                {user ? (
+                {user !== null ? (
                   <div className="flex items-center gap-4 ">
                     <div className="">
-                      <span className="flex gap-2">Hello, {user.user_metadata.name}</span>
+                      <span className="flex gap-2">Hello, {user?.name}</span>
 
                       {/* <Image
                        src={user.user_metadata.avatar_url}
@@ -53,11 +69,11 @@ const Navbar = () => {
                        className="rounded-full"
                       /> */}
                     </div>
-                    
+
                     {
                       isDashboard ? <div className="flex gap-4 items-center">
                         <div className="bg-gray-100 h-8 w-8  p-1  rounded-full text-gray-800 text-center ">
-                          {user?.user_metadata?.credits || 0}
+                          {user?.credite || 0}
                         </div>
                         <Button
                           variant={"outline"}
@@ -65,6 +81,7 @@ const Navbar = () => {
                           onClick={async () => {
                             const supabase = createClient()
                             await supabase.auth.signOut()
+                            // setUser(null)
                             router.push("/")
                           }}
                         >

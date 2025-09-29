@@ -1,6 +1,6 @@
 "use client"
 import { createClient } from '@/lib/supabase/client'
-import { useParams } from 'next/navigation'
+import { redirect, useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import UserMessage from '../../_components/UserMessage'
@@ -9,15 +9,25 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Loader2, Send } from 'lucide-react'
 import Footer from '@/components/footer/Footer'
+import { se } from 'date-fns/locale'
 const page = () => {
   const param = useParams()
   const { projectId } = param
   const [messages, setMessages] = useState([])
   const [Loading, setLoading] = useState(false)
+  const [credite, setCredite] = useState(0)
+  const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [value, setValue] = useState("")
-  console.log("value", value)
 
+  const router = useRouter()
+
+  const supabase = createClient()
+
+
+
+
+  // get messages
   async function getMessages() {
     try {
       const supabase = createClient()
@@ -34,8 +44,14 @@ const page = () => {
     }
   }
 
+  // generate project api call
   async function generateProject() {
     const supabase = createClient()
+    if (credite === 0) {
+      toast.error(`You don't have enough credits`)
+      router.push("/payment")
+      return
+    }
     try {
       const Project = await fetch("/api/generate", {
         method: "POST",
@@ -74,6 +90,11 @@ const page = () => {
           toast.success(`Success `)
           //  router.push(`/dashboard/${message[0].id}`)
         }
+
+
+        await supabase.from("profile").update({
+          credite: credite - 1
+        })
       }
     } catch (error) {
       console.log("error", error)
@@ -84,16 +105,34 @@ const page = () => {
 
   }
 
+  async function getProfile() {
+    const profile = await supabase.from("profile").select(
+      "*",
+    )
+    const user = profile.data[0]
+    setCredite(user.credite)
+    setUser(user);
+
+    // setUser(user);
+  }
+
+  // generate project
   useEffect(() => {
     if (messages.length === 1) {
       generateProject()
     }
   }, [messages])
 
+  // get messages
+  useEffect(() => {
+    getMessages()
+
+
+  }, [])
+
   // subscribe to messages
   useEffect(() => {
     async function getMessages() {
-      const supabase = createClient()
       try {
         setLoading(true)
         const channel = supabase.channel("messages").on(
@@ -116,20 +155,27 @@ const page = () => {
         toast.error(`Error: ${error.message}`)
       }
     }
-    getMessages()
+    getMessages();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase])
 
-  }, [])
-
+  // get user profile
   useEffect(() => {
-    getMessages()
-
-
+    getProfile()
   }, [projectId])
 
+
+  // handle submit
   async function handleSubmit(e) {
     e.preventDefault()
+    if (credite === 3) {
+      toast.error(`You don't have enough credits`)
+      router.push("/payment")
+
+    }
     try {
-      setIsLoading(true)
       const supabase = createClient()
       const { data, error } = await supabase.from("messages").insert({
         role: "USER",
@@ -138,10 +184,10 @@ const page = () => {
       }).select().single()
       setValue("")
       if (error) {
-        setIsLoading(false)
         toast.error(`Error: ${error.message}`)
       } else {
-        
+        setIsLoading(true)
+
         const respond = await fetch("/api/generate", {
           method: "POST",
           headers: {
@@ -153,27 +199,32 @@ const page = () => {
         })
         const data = await respond.json()
         if (respond.ok) {
-        const { data: message, error } = await supabase.from("messages").insert({
-          title: data.title,
-          loadAnalysis: data.loadAnalysis,
-          batteryBankSizing: data.batteryBankSizing,
-          solarPVArraySizing: data.solarPVArraySizing,
-          chargeControllerSizing: data.chargeControllerSizing,
-          inverterSizing: data.inverterSizing,
-          summary: data.summary,
-          suggestions: data.suggestions,
-          notes: data.notes,
-          project_id: projectId,
-          role: "AI"
-        }).select().single()
-        if (error) {
-          setIsLoading(false)
-          toast.error(`Error: ${error.message}`)
-        } else {
-          setIsLoading(false)
 
-          //  router.push(`/dashboard/${message[0].id}`)
-        }
+          const { data: message, error } = await supabase.from("messages").insert({
+            title: data.title,
+            loadAnalysis: data.loadAnalysis,
+            batteryBankSizing: data.batteryBankSizing,
+            solarPVArraySizing: data.solarPVArraySizing,
+            chargeControllerSizing: data.chargeControllerSizing,
+            inverterSizing: data.inverterSizing,
+            summary: data.summary,
+            suggestions: data.suggestions,
+            notes: data.notes,
+            project_id: projectId,
+            role: "AI"
+          }).select().single()
+          if (error) {
+            setIsLoading(false)
+            toast.error(`Error: ${error.message}`)
+          } else {
+            setIsLoading(false)
+
+            //  router.push(`/dashboard/${message[0].id}`)
+          }
+
+          await supabase.from("profile").update({
+            credite: credite - 1
+          }).select().eq("id", user.id)
         }
 
       }
@@ -214,23 +265,28 @@ const page = () => {
             })
           }
         </div>
+        <div className=' w-full flex justify-end px-20'>
+          {
+            isLoading && <span className="animate-pulse " >thinking...</span>
+          }
 
+        </div>
         <div className='w-full flex flex-col justify-center items-center gap-2   '>
           {/* <div
             className={cn('flex flex-col items-center justify-center max-w-4xl mx-auto w-full h-10 bg-transparent  opacity-2 rounded-lg p-4 shadow-md gap-4',)}
           /> */}
+
           <div className="mt-4 bg-gray-200  max-w-3xl flex w-full items-end mb-2 max-auto border-2 border-gray-300 rounded-lg p-4 text-md ">
             <textarea
               value={value}
               className={"resize-none w-[95%] h-20  focus:outline-0 "}
               onChange={(e) => setValue(e.target.value)}
             />
-            {
-              isLoading ? <Loader2 className="animate-spin" /> : <Send size={25}
-                onClick={handleSubmit}
-                className="cursor-pointer"
-              />
-            }
+            <Send size={25}
+              onClick={handleSubmit}
+              className="cursor-pointer"
+            />
+
           </div>
         </div>
       </div>
