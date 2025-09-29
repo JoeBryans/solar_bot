@@ -18,50 +18,64 @@ const Samples = [
 const Hero = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [value, setValue] = useState("")
+  const [user, setUser] = useState(null)
+  const [credite, setCredite] = useState(0)
   const router = useRouter()
- 
-  // const splitValue= value.split(" ")
-  // const title = splitValue.join 
-  // console.log("splitValue", splitValue)
-  // console.log("title", title)
-  
-  
 
+  const supabase = createClient()
+
+  // get user profile
+  async function getProfile() {
+    const profile = await supabase.from("profile").select(
+      "*",
+    )
+    const user = profile.data[0]
+    setCredite(user.credite)
+    setUser(user);
+  }
+
+  // get user profile
+  useEffect(() => {
+    getProfile()
+  }, [value])
 
   async function handleSubmit(e) {
     e.preventDefault()
 
-    try {
-      setIsLoading(true)
-      // const res = await getTitle(value)
-      // console.log("title", res)
-      const supabase = createClient()
-      const { data: project, error } = await supabase.from("projects").insert({
-        title: "solar energy"
-      }).select("*")
-      if (error) {
-        setIsLoading(false)
-        toast.error(`Error: ${error.message}`)
-      } else {
-        const { data: message, error } = await supabase.from("messages").insert({
-          prompt: value,
-          project_id: project[0].id,
-          role: "USER"
+    if (credite === 0) {
+      toast.error(`You don't have enough credits`)
+      router.push("/plans")
+
+    } else {
+      try {
+        setIsLoading(true)
+        const { data: project, error } = await supabase.from("projects").insert({
+          title: "what is the ...."
         }).select("*")
         if (error) {
           setIsLoading(false)
           toast.error(`Error: ${error.message}`)
         } else {
-          setIsLoading(false)
+          const { data: message, error } = await supabase.from("messages").insert({
+            prompt: value,
+            project_id: project[0].id,
+            role: "USER"
+          }).select("*")
+          if (error) {
+            setIsLoading(false)
+            toast.error(`Error: ${error.message}`)
+          } else {
+            setIsLoading(false)
 
-          toast.success(`Success: ${project[0].id}`)
-          router.push(`/dashboard/${project[0].id}`)
+            toast.success(`Success: ${project[0].id}`)
+            router.push(`/dashboard/${project[0].id}`)
+          }
         }
+      } catch (error) {
+        setIsLoading(false)
+        console.log(error)
+        toast.error(`Error: ${error.message}`)
       }
-    } catch (error) {
-      setIsLoading(false)
-      console.log(error)
-      toast.error(`Error: ${error.message}`)
     }
 
   }
@@ -70,7 +84,7 @@ const Hero = () => {
   //   <div className="w-full h-[100vh] bg-gradient-to-r from-blue-500 to-purple-400 via-purple-600 flex flex-col text-white">
   return (
     <div className="w-full h-[100vh] bg-gray-200 flex flex-col ">
-      <div className="max-w-6xlw-full flex flex-col items-center h-full mt-20 gap-4 ">
+      <div className="max-w-6xlw-full flex flex-col items-center h-full mt-20 gap-4 px-5 ">
 
         <span className="max-w-2xl mx-auto font-bold lg:text-4xl md:text-2xl text-xl mb-2 ">
           making your solar calculations and estimate easy and fast
