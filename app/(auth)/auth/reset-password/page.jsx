@@ -3,15 +3,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { toast } from 'sonner'
-import { set } from 'zod'
 
 const page = () => {
     const [password, setPassword] = React.useState("")
     const [confirmPassword, setConfirmPassword] = React.useState("")
     const [error, setError] = React.useState(null)
     const [isLoading, setIsLoading] = React.useState(false)
+   
+    const router = useRouter()
 
     const supabase = createClient()
 
